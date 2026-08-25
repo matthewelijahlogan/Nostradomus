@@ -25,6 +25,15 @@ async function getEarthquakeOutlook(feature) {
   const windowEnd = new Date(end); windowEnd.setUTCDate(windowEnd.getUTCDate() + 30);
   return { location: feature.properties?.place || 'USGS reference region', threshold: 'M4.5+', events, days: 365, windowEnd: windowEnd.toISOString(), probability, methodology: 'Historical-rate frequency model for the next 30 days within 150 km; not an earthquake prediction.' };
 }
+async function getInterstellarOutlook() {
+  const response = await fetch('https://ssd-api.jpl.nasa.gov/cad.api?date-min=now&date-max=%2B365&dist-max=0.05&sort=dist&limit=1&diameter=true&fullname=true');
+  if (!response.ok) throw Error(`NASA/JPL close approach ${response.status}`);
+  const data = await response.json();
+  if (!data.data?.length) return { status: 'NO CLOSE APPROACHES IN QUERY WINDOW' };
+  const row = data.data[0], index = Object.fromEntries(data.fields.map((field, position) => [field, position]));
+  const distanceAu = Number(row[index.dist]);
+  return { status: 'KNOWN CLOSE FLYBY', object: String(row[index.fullname] || row[index.des]).trim(), date: row[index.cd], distanceAu, lunarDistances: Math.round(distanceAu * 389.17), diameterKm: row[index.diameter] == null ? null : Number(row[index.diameter]), source: 'NASA/JPL SBDB Close Approach Data API', methodology: 'Known nominal close-approach trajectory, not an impact prediction.' };
+}
 const rssItems = (xml) => [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 8).map(([, item]) => ({
   title: decode((item.match(/<title>([\s\S]*?)<\/title>/) || [, 'Untitled'])[1]).trim(),
   url: decode((item.match(/<link>([\s\S]*?)<\/link>/) || [, ''])[1]).trim(),
@@ -35,10 +44,11 @@ const rssItems = (xml) => [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0
 async function getLiveBrief() {
   if (cache.body && Date.now() - cache.at < CACHE_MS) return { ...cache.body, cached: true };
   const retrievedAt = new Date().toISOString();
-  const [newsResult, quakeResult, macroResult] = await Promise.allSettled([
+  const [newsResult, quakeResult, macroResult, interstellarResult] = await Promise.allSettled([
     fetch('https://feeds.bbci.co.uk/news/world/rss.xml', { headers: { 'User-Agent': 'Nostradomus/0.1 public-source monitor' } }).then(r => { if (!r.ok) throw Error(`BBC ${r.status}`); return r.text(); }),
     fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson').then(r => { if (!r.ok) throw Error(`USGS ${r.status}`); return r.json(); }),
-    fetch('https://api.worldbank.org/v2/country/WLD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=4').then(r => { if (!r.ok) throw Error(`World Bank ${r.status}`); return r.json(); })
+    fetch('https://api.worldbank.org/v2/country/WLD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=4').then(r => { if (!r.ok) throw Error(`World Bank ${r.status}`); return r.json(); }),
+    getInterstellarOutlook()
   ]);
   const articles = newsResult.status === 'fulfilled' ? rssItems(newsResult.value) : [];
   const quakeFeatures = quakeResult.status === 'fulfilled' ? quakeResult.value.features.filter(feature => feature.properties?.mag != null).slice(0, 5) : [];
@@ -47,12 +57,13 @@ async function getLiveBrief() {
   if (quakeFeatures[0]) { try { earthquakeOutlook = await getEarthquakeOutlook(quakeFeatures[0]); } catch {} }
   const record = macroResult.status === 'fulfilled' ? (macroResult.value[1] || []).find(x => x.value != null) : null;
   const body = {
-    retrievedAt, cached: false, articles, quakes, earthquakeOutlook,
+    retrievedAt, cached: false, articles, quakes, earthquakeOutlook, interstellarOutlook: interstellarResult.status === 'fulfilled' ? interstellarResult.value : null,
     macro: record ? { label: 'World GDP growth (annual %)', value: record.value, year: record.date, source: 'World Bank World Development Indicators' } : null,
     sources: [
       { name: 'BBC News — World RSS', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', status: newsResult.status },
       { name: 'USGS Significant Earthquakes, Past Day', url: 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson', status: quakeResult.status },
       { name: 'USGS Earthquake Catalog', url: 'https://earthquake.usgs.gov/fdsnws/event/1/', status: earthquakeOutlook ? 'fulfilled' : 'unavailable' },
+      { name: 'NASA/JPL SBDB Close Approach Data API', url: 'https://ssd-api.jpl.nasa.gov/cad.api', status: interstellarResult.status },
       { name: 'World Bank Indicators API', url: 'https://api.worldbank.org/v2/country/WLD/indicator/NY.GDP.MKTP.KD.ZG?format=json', status: macroResult.status }
     ]
   };
@@ -72,11 +83,11 @@ async function getSignalTimeline(query) {
 }
 async function getCodexMetrics() {
   if (metricsCache.body && Date.now() - metricsCache.at < METRICS_CACHE_MS) return { ...metricsCache.body, cached: true };
-  const [civil, military] = await Promise.all([
+  const [civilResult, militaryResult] = await Promise.allSettled([
     getSignalTimeline('(protest OR riot OR demonstration)'),
     getSignalTimeline('(military OR missile OR airstrike OR "armed conflict")')
   ]);
-  const body = { retrievedAt: new Date().toISOString(), cached: false, civil, military, source: { name: 'GDELT DOC 2.0', url: 'https://api.gdeltproject.org/api/v2/doc/doc' } };
+  const body = { retrievedAt: new Date().toISOString(), cached: false, civil: civilResult.status === 'fulfilled' ? civilResult.value : [], military: militaryResult.status === 'fulfilled' ? militaryResult.value : [], source: { name: 'GDELT DOC 2.0', url: 'https://api.gdeltproject.org/api/v2/doc/doc', civilStatus: civilResult.status, militaryStatus: militaryResult.status } };
   metricsCache = { at: Date.now(), body };
   return body;
 }

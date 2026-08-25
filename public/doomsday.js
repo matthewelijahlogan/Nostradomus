@@ -41,8 +41,7 @@ function modelEventCategory({nuclearSignals,militarySignals,earthquakeOutlook}){
   const candidates=[
     {name:'ECONOMIC DISRUPTION',score:economicScore,detail:'WORLD BANK VOLATILITY MODEL'},
     {name:'MILITARY ESCALATION',score:Math.min(100,militarySignals*30),detail:'BBC MILITARY REPORTING MODEL'},
-    {name:'NUCLEAR ESCALATION',score:Math.min(100,nuclearSignals*45),detail:'BBC NUCLEAR-RELATED REPORTING MODEL'},
-    {name:'NATURAL HAZARD',score:earthquakeOutlook?.probability||0,detail:'USGS 30-DAY FREQUENCY MODEL'}
+    {name:'NUCLEAR ESCALATION',score:Math.min(100,nuclearSignals*45),detail:'BBC NUCLEAR-RELATED REPORTING MODEL'}
   ];
   return candidates.sort((a,b)=>b.score-a.score)[0];
 }
@@ -54,6 +53,7 @@ fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(
   const militarySignals=data.articles.filter(article=>/military|conflict|war|airstrike|invasion|troops/i.test(article.title)).length;
   const naturalSignals=data.quakes.length;
   const earthquakeOutlook=data.earthquakeOutlook;
+  const interstellarOutlook=data.interstellarOutlook;
   document.querySelector('#nuclear-status').textContent=nuclearSignals?nuclearSignals+' ACTIVE':'NO ACTIVE SIGNALS';
   document.querySelector('#nuclear-detail').textContent='BBC WORLD · CURRENT FEED';
   document.querySelector('#natural-status').textContent=naturalSignals?naturalSignals+' SIGNIFICANT':'NO SIGNIFICANT QUAKES';
@@ -79,6 +79,11 @@ fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(
   document.querySelector('#event-category-detail').textContent=forwardCategory.score+'/100 · '+forwardCategory.detail;
   document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: '+forwardCategory.name;
   document.querySelector('#terminal-trigger').textContent='LIKELY TRIGGER: '+forwardCategory.name;
+  document.querySelector('#natural-status').textContent=interstellarOutlook?.status||'INTERSTELLAR DATA UNAVAILABLE';
+  document.querySelector('#natural-detail').textContent='NASA/JPL KNOWN-TRAJECTORY DATA';
+  document.querySelector('#natural-risk').textContent=interstellarOutlook?.object||'NO OBJECT RETURNED';
+  document.querySelector('#natural-risk-detail').textContent=interstellarOutlook?.date?('CLOSEST APPROACH '+interstellarOutlook.date).toUpperCase():'NO FUTURE APPROACH IN QUERY WINDOW';
+  document.querySelector('#natural-forecast').textContent=interstellarOutlook?.lunarDistances?interstellarOutlook.lunarDistances+' LUNAR DISTANCES · NOMINAL FLYBY, NOT IMPACT':'NO IMPACT CLAIM INFERRED FROM FLYBY DATA';
   updateMilitaryLeaders();
 }).catch(()=>{
   document.querySelector('#nuclear-status').textContent='UNAVAILABLE';

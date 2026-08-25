@@ -1,3 +1,4 @@
+const noveltyScript=document.createElement('script');noveltyScript.src='novelty.js';document.head.append(noveltyScript);
 const modal=document.querySelector('#modal'),run=document.querySelector('#run');
 const METRICS_API='https://nostradomus-live-api.onrender.com/api/codex-metrics';
 function ensureCharts(){
@@ -49,6 +50,12 @@ async function renderWaterMap(){
   function draw(){const category=select.value,maximum=Math.max(...water.states.map(state=>state[category]),1);svg.innerHTML=states.map(feature=>{const code=fipsToState[Number(feature.id)],state=stateData.get(code),value=state?state[category]:0,opacity=.16+.84*Math.sqrt(value/maximum);return '<path data-code="'+code+'" d="'+path(feature)+'" fill="'+(value?'#ff3fbd':'#183047')+'" fill-opacity="'+opacity.toFixed(2)+'" stroke="#42dff8" stroke-opacity=".58"><title>'+state.name+': '+value+' reported record'+(value===1?'':'s')+'</title></path>'}).join('');note.textContent=water.coverageNote+' Extract: '+water.asOf+'. Source: EPA SDWIS public download.';selection.textContent='Select a state for its reported-record count.';svg.querySelectorAll('path').forEach(element=>element.addEventListener('click',()=>{const state=stateData.get(element.dataset.code),value=state[category];selection.textContent=state.name+': '+value+' '+water.categories[category].toLowerCase()+' record'+(value===1?'':'s')+' in '+water.asOf+'.'}))}
   select.addEventListener('change',draw);draw();
 }
+function showMetricsUnavailable(data){
+  ensureCharts();
+  ['civil-chart','military-chart','gematria-chart'].forEach(id=>{document.querySelector('#'+id).innerHTML='<text x="20" y="105" fill="#8da7b9" font-size="15">GDELT reporting timeline temporarily rate-limited. Retry shortly.</text>'});
+  document.querySelector('#resonance').textContent='--';document.querySelector('#patterns').textContent='--';document.querySelector('#cycle').textContent='--';document.querySelector('#counter').textContent='--';
+  document.querySelector('#empty').hidden=true;document.querySelector('#results').hidden=false;
+}
 async function execute(){
   modal.hidden=false;
   modal.querySelector('.progress i').style.width='100%';
@@ -56,7 +63,8 @@ async function execute(){
   try{
     const response=await fetch(METRICS_API);
     if(!response.ok)throw Error('Metrics service unavailable');
-    renderMetrics(await response.json());
+    const data=await response.json();
+    if(data.civil?.length&&data.military?.length)renderMetrics(data);else showMetricsUnavailable(data);
     renderWaterMap().catch(()=>{ensureWaterPanel();document.querySelector('#water-selection').textContent='EPA map data is temporarily unavailable.'});
     document.querySelector('#empty').hidden=true;
     document.querySelector('#results').hidden=false;
