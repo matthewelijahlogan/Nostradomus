@@ -21,6 +21,15 @@
     <section class="live-feed" aria-label="Live public-source intelligence"><div class="section-heading"><div><p class="eyebrow">LIVE SOURCE MONITOR</p><h2>Current public reporting &amp; signals</h2></div><button id="refresh-live" class="text-button">Refresh sources <span>↻</span></button></div><p id="live-state" class="live-state">Connecting to public sources…</p><div id="live-content" class="live-content"></div><p class="source-disclaimer">Source material is presented as reporting and data, not as a prediction or verification of any claim.</p></section>
     <section class="console" aria-label="Forecast console">
       <div class="section-heading"><div><p class="eyebrow">THE ORACLE</p><h2>Forecast Console</h2></div><div class="horizons" role="group" aria-label="Forecast horizon"><button data-horizon="7">7D</button><button data-horizon="30">30D</button><button class="active" data-horizon="90">90D</button><button data-horizon="180">180D</button></div></div>
+      <div class="volatility-explorer">
+        <div class="explorer-copy"><p class="eyebrow">VOLATILITY EXPLORER</p><p>Compare regional conditions or search an individual country.</p></div>
+        <div class="explorer-controls">
+          <label>Region<select id="region-filter" aria-label="Filter regional volatility"><option value="all">All regions</option><option>Middle East</option><option>Europe</option><option>Asia-Pacific</option><option>Africa</option><option>Americas</option><option>Oceania</option></select></label>
+          <label>Country<input id="country-search" type="search" placeholder="Search a country" autocomplete="off" aria-describedby="country-search-help"></label>
+        </div>
+        <p id="country-search-help" class="explorer-help">Select a result to view its volatility drivers and outlook.</p>
+        <div id="volatility-results" class="volatility-results" aria-live="polite"></div>
+      </div>
       <div class="console-grid"><div id="forecast-list" class="forecast-list" aria-label="Forecasts"></div><article id="forecast-detail" class="detail-panel" aria-live="polite"></article></div>
     </section>
     <section class="systems-grid">
@@ -29,5 +38,20 @@
     </section>
     <section class="ledger"><div><p class="eyebrow">THE CHRONICLE</p><h2>Forecast ledger</h2><p>Every probability movement is recorded. Nothing is silently rewritten.</p></div><button id="alert-button" class="primary-button">Create risk alert</button></section>
   </main>
-  <div id="toast" class="toast" role="status"></div><script src="app.js"></script><script src="live-client.js"></script>
+  <aside class="doomsday-clock" aria-label="Modelled scenario clocks">
+    <span class="clock-kicker">SCENARIO TIMEKEEPER</span>
+    <div class="clock-face" aria-hidden="true"><i></i><b></b><em>23:55</em></div>
+    <section class="scenario-clock">
+      <span>TERMINAL SCENARIO</span>
+      <strong id="terminal-countdown">--</strong>
+      <small id="terminal-date">EST. --</small>
+    </section>
+    <section class="scenario-clock next-event">
+      <span>NEXT GLOBAL INFLECTION</span>
+      <strong id="event-countdown">--</strong>
+      <small id="event-date">EST. --</small>
+    </section>
+    <span class="clock-status">MODEL SCENARIOS · NOT PREDICTIONS</span>
+  </aside>
+  <div id="toast" class="toast" role="status"></div><script src="app.js"></script><script src="explorer.js"></script><script src="doomsday.js"></script><script src="live-client.js"></script>
 </body></html>
