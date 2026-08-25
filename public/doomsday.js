@@ -1,15 +1,16 @@
-const nextScheduledEvent=new Date('2026-09-08T14:00:00Z');
-function formatRemaining(milliseconds){
-  const total=Math.max(0,Math.floor(milliseconds/1000));
-  const days=Math.floor(total/86400);
-  const hours=Math.floor(total%86400/3600);
-  const minutes=Math.floor(total%3600/60);
-  const seconds=total%60;
-  if(days>99)return days+'D '+String(hours).padStart(2,'0')+'H';
-  return String(days).padStart(2,'0')+'D '+String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0')+':'+String(seconds).padStart(2,'0');
+function updateOracleClock(){
+  const forecasts=[...document.querySelectorAll('#forecast-list .forecast')].map(item=>({
+    name:item.querySelector('span').childNodes[0].textContent.trim(),
+    score:Number.parseFloat(item.querySelector('b').textContent)
+  })).filter(item=>Number.isFinite(item.score));
+  if(!forecasts.length)return;
+  const average=forecasts.reduce((sum,item)=>sum+item.score,0)/forecasts.length;
+  const seconds=Math.max(60,Math.round(300-average*4));
+  const highest=forecasts.reduce((current,item)=>item.score>current.score?item:current);
+  document.querySelector('#terminal-countdown').textContent=seconds+' SECONDS';
+  document.querySelector('#terminal-date').textContent='TO MIDNIGHT · SYSTEMIC INDEX '+Math.round(average)+'/100';
+  document.querySelector('#event-countdown').textContent=highest.score+'%';
+  document.querySelector('#event-date').textContent=highest.name.toUpperCase()+' · ACTIVE HORIZON';
 }
-function updateScheduledEventClock(){
-  document.querySelector('#event-countdown').textContent=formatRemaining(nextScheduledEvent-Date.now());
-}
-updateScheduledEventClock();
-setInterval(updateScheduledEventClock,1000);
+updateOracleClock();
+document.querySelectorAll('[data-horizon]').forEach(button=>button.addEventListener('click',()=>requestAnimationFrame(updateOracleClock)));

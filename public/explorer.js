@@ -24,10 +24,11 @@ const countryVolatility=[
   {name:'South Africa',region:'Africa',scores:{7:29,30:33,90:36,180:40},confidence:'Moderate',change:'+2.7 points',drivers:[['Electricity reliability','Elevated'],['Fiscal outlook','Moderate'],['Social pressure','Moderate']]},
   {name:'Turkey',region:'Middle East',scores:{7:34,30:38,90:42,180:45},confidence:'Moderate',change:'+3.8 points',drivers:[['Inflation persistence','High'],['Currency volatility','Elevated'],['Regional security','Moderate']]},
   {name:'United Kingdom',region:'Europe',scores:{7:15,30:18,90:21,180:24},confidence:'Low',change:'+0.8 points',drivers:[['Fiscal headroom','Moderate'],['Growth outlook','Moderate'],['Energy costs','Low']]},
-  {name:'United States',region:'Americas',scores:{7:17,30:20,90:23,180:27},confidence:'Low',change:'+1.1 points',drivers:[['Political polarization','Moderate'],['Debt trajectory','Moderate'],['Market concentration','Moderate']]}
+  {name:'United States of America',aliases:['United States','USA','US'],region:'Americas',scores:{7:17,30:20,90:23,180:27},confidence:'Low',change:'+1.1 points',drivers:[['Political polarization','Moderate'],['Debt trajectory','Moderate'],['Market concentration','Moderate']]}
 ];
 const regionFilter=document.querySelector('#region-filter');
 const countrySearch=document.querySelector('#country-search');
+const countryFilter=document.querySelector('#country-filter');
 const resultPanel=document.querySelector('#volatility-results');
 const detailPanel=document.querySelector('#forecast-detail');
 let selectedCountry=null;
@@ -39,7 +40,7 @@ function renderCountryDetail(country){
 function renderVolatility(){
   const query=countrySearch.value.trim().toLowerCase();
   const region=regionFilter.value;
-  const records=query?countryVolatility.filter(country=>country.name.toLowerCase().includes(query)&& (region==='all'||country.region===region)):regionalVolatility.filter(item=>region==='all'||item.name===region);
+  const records=query?countryVolatility.filter(country=>(country.name.toLowerCase().includes(query)||(country.aliases||[]).some(alias=>alias.toLowerCase().includes(query)))&& (region==='all'||country.region===region)):regionalVolatility.filter(item=>region==='all'||item.name===region);
   if(!records.length){resultPanel.innerHTML='<p class="volatility-empty">No country profile matches that search. Try another country or clear the region filter.</p>';return}
   resultPanel.innerHTML=records.map(item=>{
     const isCountry='region' in item;
@@ -51,6 +52,8 @@ function renderVolatility(){
   }));
 }
 regionFilter.addEventListener('change',renderVolatility);
-countrySearch.addEventListener('input',renderVolatility);
+countrySearch.addEventListener('input',()=>{countryFilter.value='all';renderVolatility()});
+countryFilter.innerHTML+=[...countryVolatility].sort((a,b)=>a.name.localeCompare(b.name)).map(country=>`<option value="${country.name}">${country.name}</option>`).join('');
+countryFilter.addEventListener('change',()=>{countrySearch.value=countryFilter.value==='all'?'':countryFilter.value;renderVolatility()});
 document.querySelectorAll('[data-horizon]').forEach(button=>button.addEventListener('click',()=>{if(selectedCountry)renderCountryDetail(selectedCountry);renderVolatility()}));
 renderVolatility();

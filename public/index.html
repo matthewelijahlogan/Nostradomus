@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="NOSTRADOMUS — predictive global intelligence.">
-  <link rel="icon" type="image/png" href="assets/nostradomus-icon.png"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="live.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="icon" type="image/png" href="assets/nostradomus-icon.png"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="live.css">
   <title>NOSTRADOMUS — Predictive Global Intelligence</title>
 </head>
 <body>
@@ -26,6 +26,7 @@
         <div class="explorer-controls">
           <label>Region<select id="region-filter" aria-label="Filter regional volatility"><option value="all">All regions</option><option>Middle East</option><option>Europe</option><option>Asia-Pacific</option><option>Africa</option><option>Americas</option><option>Oceania</option></select></label>
           <label>Country<input id="country-search" type="search" placeholder="Search a country" autocomplete="off" aria-describedby="country-search-help"></label>
+          <label>Country list<select id="country-filter" aria-label="Select a country"><option value="all">All countries</option></select></label>
         </div>
         <p id="country-search-help" class="explorer-help">Select a result to view its volatility drivers and outlook.</p>
         <div id="volatility-results" class="volatility-results" aria-live="polite"></div>
@@ -38,20 +39,20 @@
     </section>
     <section class="ledger"><div><p class="eyebrow">THE CHRONICLE</p><h2>Forecast ledger</h2><p>Every probability movement is recorded. Nothing is silently rewritten.</p></div><button id="alert-button" class="primary-button">Create risk alert</button></section>
   </main>
-  <aside class="doomsday-clock" aria-label="Verified global-clock data">
-    <div class="ticker-brand"><span class="ticker-pulse"></span><span>VERIFIED SIGNALS</span></div>
+  <aside class="doomsday-clock" aria-label="Nostradomus systemic risk clock">
+    <div class="ticker-brand"><span class="ticker-pulse"></span><span>ORACLE SIGNALS</span></div>
     <section class="scenario-clock">
-      <span>BULLETIN DOOMSDAY CLOCK</span>
-      <strong>85 SECONDS</strong>
-      <small>TO MIDNIGHT · SET 27 JAN 2026</small>
+      <span>NOSTRADOMUS SYSTEMIC CLOCK</span>
+      <strong id="terminal-countdown">--</strong>
+      <small id="terminal-date">DERIVED FROM ACTIVE FORECASTS</small>
     </section>
     <i class="ticker-divider" aria-hidden="true"></i>
     <section class="scenario-clock next-event">
-      <span>NEXT SCHEDULED GLOBAL EVENT</span>
+      <span>HIGHEST ACTIVE OUTLOOK</span>
       <strong id="event-countdown">--</strong>
-      <small id="event-date">UNGA 81 OPENS · 08 SEP 2026, 14:00 UTC</small>
+      <small id="event-date">SYNCHRONIZING FORECAST MODEL</small>
     </section>
-    <span class="clock-status"><a href="https://thebulletin.org/doomsday-clock/2026-statement/" target="_blank" rel="noopener">BULLETIN</a> · <a href="https://www.un.org/en/ga/81/meetings/" target="_blank" rel="noopener">UNITED NATIONS</a></span>
+    <span class="clock-status">ORACLE MODEL · HORIZON RESPONSIVE</span>
   </aside>
   <div id="toast" class="toast" role="status"></div><script src="app.js"></script><script src="explorer.js"></script><script src="doomsday.js"></script><script src="live-client.js"></script>
 </body></html>
