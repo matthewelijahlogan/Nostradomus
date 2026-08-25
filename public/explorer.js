@@ -13,7 +13,10 @@ function regionalProfiles(){
     const group=groups.get(country.region)||[];
     group.push(country.score);groups.set(country.region,group);
   });
-  return [...groups].map(([name,scores])=>({name,score:Math.round(scores.reduce((sum,score)=>sum+score,0)/scores.length),count:scores.length})).sort((a,b)=>a.name.localeCompare(b.name));
+  const profiles=[...groups].map(([name,scores])=>({name,score:Math.round(scores.reduce((sum,score)=>sum+score,0)/scores.length),count:scores.length}));
+  const allScores=countryVolatility.filter(country=>country.score != null).map(country=>country.score);
+  if(allScores.length)profiles.unshift({name:'Worldwide',score:Math.round(allScores.reduce((sum,score)=>sum+score,0)/allScores.length),count:allScores.length});
+  return profiles.sort((a,b)=>a.name==='Worldwide'?-1:b.name==='Worldwide'?1:a.name.localeCompare(b.name));
 }
 function renderCountryDetail(country){
   if(country.score == null){
@@ -26,7 +29,7 @@ function renderCountryDetail(country){
 function renderVolatility(){
   const query=countrySearch.value.trim().toLowerCase();
   const region=regionFilter.value;
-  const records=query?countryVolatility.filter(country=>country.name.toLowerCase().includes(query)&&(region==='all'||country.region===region)):regionalProfiles().filter(item=>region==='all'||item.name===region);
+  const records=query?countryVolatility.filter(country=>country.name.toLowerCase().includes(query)&&(region==='all'||region==='Worldwide'||country.region===region)):regionalProfiles().filter(item=>region==='all'||item.name===region);
   if(!records.length){resultPanel.innerHTML='<p class="volatility-empty">No matching country or regional data is available.</p>';return}
   resultPanel.innerHTML=records.map(item=>{
     const country='iso3' in item;
@@ -48,7 +51,7 @@ function configureExplorer(data){
   countryVolatility=data.countries;
   countryFilter.innerHTML='<option value="all">All '+countryVolatility.length+' World Bank economies</option>'+countryVolatility.map(country=>'<option value="'+country.iso3+'">'+country.name+'</option>').join('');
   const regions=[...new Set(countryVolatility.map(country=>country.region))].sort();
-  regionFilter.innerHTML='<option value="all">All regions</option>'+regions.map(region=>'<option value="'+region+'">'+region+'</option>').join('');
+  regionFilter.innerHTML='<option value="all">All regions</option><option value="Worldwide">Worldwide</option>'+regions.map(region=>'<option value="'+region+'">'+region+'</option>').join('');
   explorerHelp.innerHTML='Latest published economic data from <a href="'+data.source.url+'" target="_blank" rel="noopener">World Bank World Development Indicators</a>. '+data.methodology;
   window.oracleCountryVolatility=countryVolatility;
   window.dispatchEvent(new CustomEvent('oracle-volatility-loaded',{detail:countryVolatility}));
