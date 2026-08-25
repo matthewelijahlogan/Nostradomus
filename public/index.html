@@ -40,6 +40,7 @@
     <section class="ledger"><div><p class="eyebrow">THE CHRONICLE</p><h2>Forecast ledger</h2><p>Every probability movement is recorded. Nothing is silently rewritten.</p></div><button id="alert-button" class="primary-button">Create risk alert</button></section>
   </main>
   <aside class="doomsday-clock" aria-label="Nostradomus systemic risk clock">
+    <div class="ticker-track">
     <div class="ticker-brand"><span class="ticker-pulse"></span><span>ORACLE SIGNALS</span></div>
     <section class="scenario-clock">
       <span>NOSTRADOMUS DOOMSDAY CLOCK</span>
@@ -71,6 +72,19 @@
       <strong id="event-category">LOADING</strong>
       <small id="event-category-detail">LIVE SIGNAL CLASSIFICATION</small>
     </section>
+    <i class="ticker-divider" aria-hidden="true"></i>
+    <section class="scenario-clock risk-clock">
+      <span>MOST LIKELY NATURAL RISK</span>
+      <strong id="natural-risk">LOADING</strong>
+      <small id="natural-risk-detail">USGS CURRENT SIGNALS</small>
+    </section>
+    <i class="ticker-divider" aria-hidden="true"></i>
+    <section class="scenario-clock risk-clock military-leaders">
+      <span>MILITARY SIGNAL LEADERS</span>
+      <strong id="military-leaders">LOADING</strong>
+      <small id="military-leaders-detail">BBC MENTIONS + VOLATILITY</small>
+    </section>
+    </div>
   </aside>
   <div id="toast" class="toast" role="status"></div><script src="app.js"></script><script src="explorer.js"></script><script src="doomsday.js"></script><script src="live-client.js"></script>
 </body></html>
