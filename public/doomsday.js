@@ -1,5 +1,8 @@
 const thresholdDateFormat=new Intl.DateTimeFormat('en-US',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});
 const thresholdTimeFormat=new Intl.DateTimeFormat('en-US',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'UTC'});
+function shortUtcDate(date){
+  return String(date.getUTCDate()).padStart(2,'0')+' '+date.toLocaleString('en-US',{month:'short',timeZone:'UTC'}).toUpperCase()+' '+date.getUTCFullYear();
+}
 function updateOracleClock(countries){
   const measured=countries.filter(country=>country.score != null);
   if(!measured.length)return;
@@ -7,10 +10,12 @@ function updateOracleClock(countries){
   const highest=measured.reduce((current,country)=>country.score>current.score?country:current);
   const daysToThreshold=Math.round(4380*(1-average/100));
   const threshold=new Date(Date.now()+daysToThreshold*86400000);
+  const daysToEvent=Math.max(7,Math.round(730*(1-highest.score/100)));
+  const eventDate=new Date(Date.now()+daysToEvent*86400000);
   document.querySelector('#terminal-countdown').textContent=thresholdDateFormat.format(threshold).toUpperCase();
   document.querySelector('#terminal-date').textContent=thresholdTimeFormat.format(threshold)+' UTC · DATA INDEX '+Math.round(average)+'/100';
-  document.querySelector('#event-countdown').textContent=highest.score+'/100';
-  document.querySelector('#event-date').textContent=highest.name.toUpperCase()+' · HIGHEST ECONOMIC VOLATILITY';
+  document.querySelector('#event-countdown').textContent=shortUtcDate(eventDate);
+  document.querySelector('#event-date').textContent=thresholdTimeFormat.format(eventDate)+' UTC · '+highest.name.toUpperCase()+' SIGNAL';
 }
 window.addEventListener('oracle-volatility-loaded',event=>updateOracleClock(event.detail));
 if(window.oracleCountryVolatility)updateOracleClock(window.oracleCountryVolatility);
