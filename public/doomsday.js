@@ -16,6 +16,7 @@ function updateOracleClock(countries){
   const eventDate=new Date(Date.now()+daysToEvent*86400000);
   document.querySelector('#terminal-countdown').textContent=thresholdDateFormat.format(threshold).toUpperCase();
   document.querySelector('#terminal-date').textContent=thresholdTimeFormat.format(threshold)+' UTC · DATA INDEX '+Math.round(average)+'/100';
+  document.querySelector('#terminal-trigger').textContent='LIKELY TRIGGER: SYSTEMIC VOLATILITY';
   document.querySelector('#event-countdown').textContent=shortUtcDate(eventDate);
   document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: '+(highest.score>=65?'ECONOMIC DISRUPTION':'SYSTEMIC VOLATILITY');
   document.querySelector('#event-date').textContent=thresholdTimeFormat.format(eventDate)+' UTC · '+highest.name.toUpperCase()+' SIGNAL';
@@ -24,9 +25,13 @@ function updateOracleClock(countries){
 function updateMilitaryLeaders(){
   if(!oracleCountries.length||!briefArticles.length)return;
   const militaryArticles=briefArticles.filter(article=>/military|conflict|war|airstrike|invasion|troops/i.test(article.title));
+  const panel=document.querySelector('#military-leaders-panel'),divider=document.querySelector('#military-leaders-divider');
+  if(!militaryArticles.length){panel.hidden=true;divider.hidden=true;return}
   const leaders=oracleCountries.map(country=>{const aliases=[country.name];if(country.name==='United States')aliases.push('u.s.','us ');if(country.name==='United Kingdom')aliases.push('uk ','britain');const mentions=militaryArticles.filter(article=>aliases.some(alias=>article.title.toLowerCase().includes(alias.toLowerCase()))).length;return {...country,mentions}}).filter(country=>country.mentions>0).sort((a,b)=>b.mentions-a.mentions||b.score-a.score).slice(0,2);
-  const label=leaders.length?leaders.map(country=>country.name.toUpperCase()).join(' / '):'NO COUNTRY MATCH';
-  const detail=leaders.length?leaders.map(country=>country.mentions+' BBC MENTION'+(country.mentions===1?'':'S')).join(' - '):'NO CURRENT BBC HEADLINE MATCHES';
+  if(!leaders.length){panel.hidden=true;divider.hidden=true;return}
+  panel.hidden=false;divider.hidden=false;
+  const label=leaders.map(country=>country.name.toUpperCase()).join(' / ');
+  const detail=leaders.map(country=>country.mentions+' BBC MENTION'+(country.mentions===1?'':'S')).join(' - ');
   document.querySelector('#military-leaders').textContent=label;
   document.querySelector('#military-leaders-detail').textContent=detail+' - SIGNAL MODEL, NOT A FORECAST';
 }
@@ -42,12 +47,16 @@ fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(
   document.querySelector('#natural-status').textContent=naturalSignals?naturalSignals+' SIGNIFICANT':'NO SIGNIFICANT QUAKES';
   document.querySelector('#natural-detail').textContent='USGS · PAST 24 HOURS';
   const strongestQuake=[...data.quakes].sort((a,b)=>(b.mag||0)-(a.mag||0))[0];
+  const quakeTime=strongestQuake&&strongestQuake.time?new Date(strongestQuake.time):null;
   document.querySelector('#natural-risk').textContent=strongestQuake?'M '+Number(strongestQuake.mag).toFixed(1)+' EARTHQUAKE':'NO SIGNIFICANT HAZARD';
   document.querySelector('#natural-risk-detail').textContent=strongestQuake?(strongestQuake.title||'USGS significant event').replace(/^M [\d.]+ - /,'').slice(0,58).toUpperCase():'USGS SIGNIFICANT-EVENT FEED';
+  document.querySelector('#natural-risk-detail').textContent=strongestQuake?(quakeTime?'REPORTED '+thresholdDateFormat.format(quakeTime).toUpperCase()+' '+thresholdTimeFormat.format(quakeTime)+' UTC':'USGS REPORTED TIME UNAVAILABLE'):'USGS SIGNIFICANT-EVENT FEED';
+  document.querySelector('#natural-forecast').textContent=strongestQuake?'NO FORECAST DATE - EARTHQUAKES CANNOT BE TIMED RELIABLY':'FORECAST DATE: NOT AVAILABLE';
   const eventCategory=nuclearSignals?['NUCLEAR ESCALATION',nuclearSignals+' NUCLEAR-RELATED BBC SIGNAL'+(nuclearSignals===1?'':'S')]:militarySignals?['MILITARY ESCALATION',militarySignals+' CONFLICT-RELATED BBC SIGNAL'+(militarySignals===1?'':'S')]:naturalSignals?['NATURAL HAZARD',naturalSignals+' USGS SIGNIFICANT EVENT'+(naturalSignals===1?'':'S')]:['ECONOMIC DISRUPTION','COUNTRY-VOLATILITY MODEL FALLBACK'];
   document.querySelector('#event-category').textContent=eventCategory[0];
   document.querySelector('#event-category-detail').textContent=eventCategory[1];
   document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: '+eventCategory[0];
+  document.querySelector('#terminal-trigger').textContent='LIKELY TRIGGER: '+eventCategory[0];
   updateMilitaryLeaders();
 }).catch(()=>{
   document.querySelector('#nuclear-status').textContent='UNAVAILABLE';
@@ -56,5 +65,8 @@ fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(
   document.querySelector('#event-category-detail').textContent='LIVE FEED NOT AVAILABLE';
   document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: UNAVAILABLE';
   document.querySelector('#natural-risk').textContent='UNAVAILABLE';
+  document.querySelector('#natural-forecast').textContent='FORECAST DATE: UNAVAILABLE';
   document.querySelector('#military-leaders').textContent='UNAVAILABLE';
+  document.querySelector('#military-leaders-panel').hidden=true;
+  document.querySelector('#military-leaders-divider').hidden=true;
 });
