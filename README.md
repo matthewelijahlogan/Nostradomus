@@ -2,6 +2,8 @@
 
 **Predictive Global Intelligence**
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/matthewelijahlogan/Nostradomus)
+
 NOSTRADOMUS is a probabilistic early-warning platform for global systemic risk. The Oracle produces explainable, calibrated forecasts from conventional evidence. The Codex is an optional, explicitly interpretive research layer for gematria and symbolic-pattern analysis.
 
 ## Local preview
