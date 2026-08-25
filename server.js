@@ -43,8 +43,8 @@ const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; cha
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   if (url.pathname === '/api/brief') {
-    try { res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=300' }); res.end(JSON.stringify(await getLiveBrief())); }
-    catch { res.writeHead(502, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Live-source retrieval failed. Please retry shortly.' })); }
+    try { res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify(await getLiveBrief())); }
+    catch { res.writeHead(502, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify({ error: 'Live-source retrieval failed. Please retry shortly.' })); }
     return;
   }
   if (url.pathname === '/health') { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end('{"ok":true}'); return; }
