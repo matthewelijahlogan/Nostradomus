@@ -8,6 +8,8 @@ const CACHE_MS = 10 * 60 * 1000;
 let cache = { at: 0, body: null };
 const COUNTRY_CACHE_MS = 24 * 60 * 60 * 1000;
 let countryCache = { at: 0, body: null };
+const METRICS_CACHE_MS = 15 * 60 * 1000;
+let metricsCache = { at: 0, body: null };
 
 const decode = (value = '') => value.replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 const rssItems = (xml) => [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 8).map(([, item]) => ({
@@ -43,6 +45,23 @@ async function getLiveBrief() {
 
 function recentRows(rows = []) {
   return rows.filter(row => row.value != null).sort((a, b) => Number(b.date) - Number(a.date));
+}
+async function getSignalTimeline(query) {
+  const endpoint = 'https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent(query) + '&mode=timelinevol&format=json&timespan=30d';
+  const response = await fetch(endpoint);
+  if (!response.ok) throw Error('GDELT timeline request failed');
+  const data = await response.json();
+  return data.timeline?.[0]?.data || [];
+}
+async function getCodexMetrics() {
+  if (metricsCache.body && Date.now() - metricsCache.at < METRICS_CACHE_MS) return { ...metricsCache.body, cached: true };
+  const [civil, military] = await Promise.all([
+    getSignalTimeline('(protest OR riot OR demonstration)'),
+    getSignalTimeline('(military OR missile OR airstrike OR "armed conflict")')
+  ]);
+  const body = { retrievedAt: new Date().toISOString(), cached: false, civil, military, source: { name: 'GDELT DOC 2.0', url: 'https://api.gdeltproject.org/api/v2/doc/doc' } };
+  metricsCache = { at: Date.now(), body };
+  return body;
 }
 async function getCountryVolatility() {
   if (countryCache.body && Date.now() - countryCache.at < COUNTRY_CACHE_MS) return { ...countryCache.body, cached: true };
@@ -92,6 +111,11 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === '/api/country-volatility') {
     try { res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=3600', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify(await getCountryVolatility())); }
     catch { res.writeHead(502, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify({ error: 'Country-volatility retrieval failed. Please retry shortly.' })); }
+    return;
+  }
+  if (url.pathname === '/api/codex-metrics') {
+    try { res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=900', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify(await getCodexMetrics())); }
+    catch { res.writeHead(502, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify({ error: 'Metrics retrieval failed. Please retry shortly.' })); }
     return;
   }
   if (url.pathname === '/health') { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end('{"ok":true}'); return; }
