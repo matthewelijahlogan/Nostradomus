@@ -1,9 +1,7 @@
 services:
   - type: web
     name: nostradomus
-    runtime: static
-    buildCommand: echo "NOSTRADOMUS static site ready"
-    staticPublishPath: ./public
-    envVars:
-      - key: SKIP_INSTALL_DEPS
-        value: "true"
+    runtime: node
+    plan: free
+    buildCommand: echo "NOSTRADOMUS live-source service ready"
+    startCommand: node server.js

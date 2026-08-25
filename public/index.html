@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="NOSTRADOMUS — predictive global intelligence.">
-  <link rel="icon" type="image/png" href="assets/nostradomus-icon.png"><link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="assets/nostradomus-icon.png"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="live.css">
   <title>NOSTRADOMUS — Predictive Global Intelligence</title>
 </head>
 <body>
@@ -18,6 +18,7 @@
     <section class="world-strip" aria-label="Global conditions">
       <article><span>WORLD STABILITY</span><strong>63.4</strong><em class="down">↓ 2.7 this month</em></article><article><span>90-DAY TAIL RISK</span><strong>18.7%</strong><em class="up">↑ 3.1 points</em></article><article><span>ACTIVE SIGNALS</span><strong>127</strong><em>19 accelerating</em></article><article><span>BLACK SWAN ACTIVITY</span><strong class="amber">ELEVATED</strong><em>4 critical clusters</em></article>
     </section>
+    <section class="live-feed" aria-label="Live public-source intelligence"><div class="section-heading"><div><p class="eyebrow">LIVE SOURCE MONITOR</p><h2>Current public reporting &amp; signals</h2></div><button id="refresh-live" class="text-button">Refresh sources <span>↻</span></button></div><p id="live-state" class="live-state">Connecting to public sources…</p><div id="live-content" class="live-content"></div><p class="source-disclaimer">Source material is presented as reporting and data, not as a prediction or verification of any claim.</p></section>
     <section class="console" aria-label="Forecast console">
       <div class="section-heading"><div><p class="eyebrow">THE ORACLE</p><h2>Forecast Console</h2></div><div class="horizons" role="group" aria-label="Forecast horizon"><button data-horizon="7">7D</button><button data-horizon="30">30D</button><button class="active" data-horizon="90">90D</button><button data-horizon="180">180D</button></div></div>
       <div class="console-grid"><div id="forecast-list" class="forecast-list" aria-label="Forecasts"></div><article id="forecast-detail" class="detail-panel" aria-live="polite"></article></div>
