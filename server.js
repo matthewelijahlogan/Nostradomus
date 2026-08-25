@@ -12,6 +12,19 @@ const METRICS_CACHE_MS = 15 * 60 * 1000;
 let metricsCache = { at: 0, body: null };
 
 const decode = (value = '') => value.replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+async function getEarthquakeOutlook(feature) {
+  if (!feature?.geometry?.coordinates) return null;
+  const [longitude, latitude] = feature.geometry.coordinates;
+  const end = new Date(), start = new Date(end); start.setUTCDate(start.getUTCDate() - 365);
+  const query = new URLSearchParams({ format: 'geojson', starttime: start.toISOString().slice(0, 10), endtime: end.toISOString().slice(0, 10), latitude, longitude, maxradiuskm: '150', minmagnitude: '4.5', orderby: 'time' });
+  const response = await fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?' + query);
+  if (!response.ok) throw Error(`USGS outlook ${response.status}`);
+  const history = await response.json();
+  const events = history.features?.length || 0;
+  const probability = Math.round(100 * (1 - Math.exp(-(events / 365) * 30)));
+  const windowEnd = new Date(end); windowEnd.setUTCDate(windowEnd.getUTCDate() + 30);
+  return { location: feature.properties?.place || 'USGS reference region', threshold: 'M4.5+', events, days: 365, windowEnd: windowEnd.toISOString(), probability, methodology: 'Historical-rate frequency model for the next 30 days within 150 km; not an earthquake prediction.' };
+}
 const rssItems = (xml) => [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 8).map(([, item]) => ({
   title: decode((item.match(/<title>([\s\S]*?)<\/title>/) || [, 'Untitled'])[1]).trim(),
   url: decode((item.match(/<link>([\s\S]*?)<\/link>/) || [, ''])[1]).trim(),
@@ -28,14 +41,18 @@ async function getLiveBrief() {
     fetch('https://api.worldbank.org/v2/country/WLD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=4').then(r => { if (!r.ok) throw Error(`World Bank ${r.status}`); return r.json(); })
   ]);
   const articles = newsResult.status === 'fulfilled' ? rssItems(newsResult.value) : [];
-  const quakes = quakeResult.status === 'fulfilled' ? quakeResult.value.features.map(f => f.properties).filter(q => q.mag != null).slice(0, 5) : [];
+  const quakeFeatures = quakeResult.status === 'fulfilled' ? quakeResult.value.features.filter(feature => feature.properties?.mag != null).slice(0, 5) : [];
+  const quakes = quakeFeatures.map(feature => feature.properties);
+  let earthquakeOutlook = null;
+  if (quakeFeatures[0]) { try { earthquakeOutlook = await getEarthquakeOutlook(quakeFeatures[0]); } catch {} }
   const record = macroResult.status === 'fulfilled' ? (macroResult.value[1] || []).find(x => x.value != null) : null;
   const body = {
-    retrievedAt, cached: false, articles, quakes,
+    retrievedAt, cached: false, articles, quakes, earthquakeOutlook,
     macro: record ? { label: 'World GDP growth (annual %)', value: record.value, year: record.date, source: 'World Bank World Development Indicators' } : null,
     sources: [
       { name: 'BBC News — World RSS', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', status: newsResult.status },
       { name: 'USGS Significant Earthquakes, Past Day', url: 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson', status: quakeResult.status },
+      { name: 'USGS Earthquake Catalog', url: 'https://earthquake.usgs.gov/fdsnws/event/1/', status: earthquakeOutlook ? 'fulfilled' : 'unavailable' },
       { name: 'World Bank Indicators API', url: 'https://api.worldbank.org/v2/country/WLD/indicator/NY.GDP.MKTP.KD.ZG?format=json', status: macroResult.status }
     ]
   };

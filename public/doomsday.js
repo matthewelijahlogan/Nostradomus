@@ -35,6 +35,17 @@ function updateMilitaryLeaders(){
   document.querySelector('#military-leaders').textContent=label;
   document.querySelector('#military-leaders-detail').textContent=detail+' - SIGNAL MODEL, NOT A FORECAST';
 }
+function modelEventCategory({nuclearSignals,militarySignals,earthquakeOutlook}){
+  const measured=oracleCountries.filter(country=>country.score != null);
+  const economicScore=measured.length?Math.round(measured.reduce((sum,country)=>sum+country.score,0)/measured.length):0;
+  const candidates=[
+    {name:'ECONOMIC DISRUPTION',score:economicScore,detail:'WORLD BANK VOLATILITY MODEL'},
+    {name:'MILITARY ESCALATION',score:Math.min(100,militarySignals*30),detail:'BBC MILITARY REPORTING MODEL'},
+    {name:'NUCLEAR ESCALATION',score:Math.min(100,nuclearSignals*45),detail:'BBC NUCLEAR-RELATED REPORTING MODEL'},
+    {name:'NATURAL HAZARD',score:earthquakeOutlook?.probability||0,detail:'USGS 30-DAY FREQUENCY MODEL'}
+  ];
+  return candidates.sort((a,b)=>b.score-a.score)[0];
+}
 window.addEventListener('oracle-volatility-loaded',event=>updateOracleClock(event.detail));
 if(window.oracleCountryVolatility)updateOracleClock(window.oracleCountryVolatility);
 fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(!response.ok)throw Error('Live data unavailable');return response.json()}).then(data=>{
@@ -42,6 +53,7 @@ fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(
   const nuclearSignals=data.articles.filter(article=>/nuclear|missile|radiation|atomic/i.test(article.title)).length;
   const militarySignals=data.articles.filter(article=>/military|conflict|war|airstrike|invasion|troops/i.test(article.title)).length;
   const naturalSignals=data.quakes.length;
+  const earthquakeOutlook=data.earthquakeOutlook;
   document.querySelector('#nuclear-status').textContent=nuclearSignals?nuclearSignals+' ACTIVE':'NO ACTIVE SIGNALS';
   document.querySelector('#nuclear-detail').textContent='BBC WORLD · CURRENT FEED';
   document.querySelector('#natural-status').textContent=naturalSignals?naturalSignals+' SIGNIFICANT':'NO SIGNIFICANT QUAKES';
@@ -57,6 +69,16 @@ fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(
   document.querySelector('#event-category-detail').textContent=eventCategory[1];
   document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: '+eventCategory[0];
   document.querySelector('#terminal-trigger').textContent='LIKELY TRIGGER: '+eventCategory[0];
+  const forwardCategory=modelEventCategory({nuclearSignals,militarySignals,earthquakeOutlook});
+  document.querySelector('#natural-status').textContent=earthquakeOutlook?earthquakeOutlook.probability+'% / 30D':'OUTLOOK PENDING';
+  document.querySelector('#natural-detail').textContent=earthquakeOutlook?'USGS REGIONAL FREQUENCY MODEL':'USGS CATALOG UNAVAILABLE';
+  document.querySelector('#natural-risk').textContent=earthquakeOutlook?earthquakeOutlook.threshold+' · '+earthquakeOutlook.probability+'%':'NO NATURAL OUTLOOK';
+  document.querySelector('#natural-risk-detail').textContent=earthquakeOutlook?earthquakeOutlook.location.toUpperCase().slice(0,58):'NO REGIONAL FREQUENCY MODEL';
+  document.querySelector('#natural-forecast').textContent=earthquakeOutlook?'30-DAY WINDOW ENDS '+shortUtcDate(new Date(earthquakeOutlook.windowEnd))+' · '+earthquakeOutlook.events+' EVENTS / '+earthquakeOutlook.days+'D':'FORECAST WINDOW: UNAVAILABLE';
+  document.querySelector('#event-category').textContent=forwardCategory.name;
+  document.querySelector('#event-category-detail').textContent=forwardCategory.score+'/100 · '+forwardCategory.detail;
+  document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: '+forwardCategory.name;
+  document.querySelector('#terminal-trigger').textContent='LIKELY TRIGGER: '+forwardCategory.name;
   updateMilitaryLeaders();
 }).catch(()=>{
   document.querySelector('#nuclear-status').textContent='UNAVAILABLE';
