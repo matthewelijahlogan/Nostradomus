@@ -33,7 +33,16 @@ function renderVolatility(){
     const subtitle=country?(item.region+(item.score == null?' · unavailable':' · latest data')):(item.count+' countries with data');
     return '<button class="volatility-result" data-iso="'+(item.iso3||'')+'" data-country="'+country+'"><span>'+item.name+'<small>'+subtitle+'</small></span><b>'+scoreText(item.score)+'</b></button>';
   }).join('');
-  resultPanel.querySelectorAll('[data-country="true"]').forEach(button=>button.addEventListener('click',()=>renderCountryDetail(countryVolatility.find(country=>country.iso3===button.dataset.iso))));
+  resultPanel.querySelectorAll('[data-country="true"]').forEach(button=>button.addEventListener('click',()=>{
+    const country=countryVolatility.find(item=>item.iso3===button.dataset.iso);
+    renderCountryDetail(country);
+    window.dispatchEvent(new CustomEvent('oracle-country-selected',{detail:country}));
+  }));
+  resultPanel.querySelectorAll('[data-country="false"]').forEach(button=>button.addEventListener('click',()=>{
+    const region=regionalProfiles().find(item=>item.name===button.querySelector('span').childNodes[0].textContent);
+    regionFilter.value=region.name;countrySearch.value='';countryFilter.value='all';renderVolatility();
+    window.dispatchEvent(new CustomEvent('oracle-region-selected',{detail:region}));
+  }));
 }
 function configureExplorer(data){
   countryVolatility=data.countries;
@@ -51,6 +60,7 @@ countryFilter.addEventListener('change',()=>{
   const country=countryVolatility.find(item=>item.iso3===countryFilter.value);
   if(!country){countrySearch.value='';renderVolatility();return}
   regionFilter.value='all';countrySearch.value=country.name;renderVolatility();renderCountryDetail(country);
+  window.dispatchEvent(new CustomEvent('oracle-country-selected',{detail:country}));
 });
 resultPanel.innerHTML='<p class="volatility-empty">Loading published country data…</p>';
 fetch(VOLATILITY_API).then(response=>{if(!response.ok)throw Error('Country data unavailable');return response.json()}).then(configureExplorer).catch(()=>{resultPanel.innerHTML='<p class="volatility-empty">Country data is temporarily unavailable. Please retry shortly.</p>'});
