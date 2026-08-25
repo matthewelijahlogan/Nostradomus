@@ -17,6 +17,7 @@ function updateOracleClock(countries){
   document.querySelector('#terminal-countdown').textContent=thresholdDateFormat.format(threshold).toUpperCase();
   document.querySelector('#terminal-date').textContent=thresholdTimeFormat.format(threshold)+' UTC · DATA INDEX '+Math.round(average)+'/100';
   document.querySelector('#event-countdown').textContent=shortUtcDate(eventDate);
+  document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: '+(highest.score>=65?'ECONOMIC DISRUPTION':'SYSTEMIC VOLATILITY');
   document.querySelector('#event-date').textContent=thresholdTimeFormat.format(eventDate)+' UTC · '+highest.name.toUpperCase()+' SIGNAL';
   updateMilitaryLeaders();
 }
@@ -46,12 +47,14 @@ fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(
   const eventCategory=nuclearSignals?['NUCLEAR ESCALATION',nuclearSignals+' NUCLEAR-RELATED BBC SIGNAL'+(nuclearSignals===1?'':'S')]:militarySignals?['MILITARY ESCALATION',militarySignals+' CONFLICT-RELATED BBC SIGNAL'+(militarySignals===1?'':'S')]:naturalSignals?['NATURAL HAZARD',naturalSignals+' USGS SIGNIFICANT EVENT'+(naturalSignals===1?'':'S')]:['ECONOMIC DISRUPTION','COUNTRY-VOLATILITY MODEL FALLBACK'];
   document.querySelector('#event-category').textContent=eventCategory[0];
   document.querySelector('#event-category-detail').textContent=eventCategory[1];
+  document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: '+eventCategory[0];
   updateMilitaryLeaders();
 }).catch(()=>{
   document.querySelector('#nuclear-status').textContent='UNAVAILABLE';
   document.querySelector('#natural-status').textContent='UNAVAILABLE';
   document.querySelector('#event-category').textContent='UNAVAILABLE';
   document.querySelector('#event-category-detail').textContent='LIVE FEED NOT AVAILABLE';
+  document.querySelector('#event-type').textContent='MOST LIKELY CATEGORY: UNAVAILABLE';
   document.querySelector('#natural-risk').textContent='UNAVAILABLE';
   document.querySelector('#military-leaders').textContent='UNAVAILABLE';
 });
