@@ -1,49 +1,32 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="NOSTRADOMUS — predictive global intelligence.">
-    <link rel="icon" type="image/png" href="assets/nostradomus-icon.png">
-    <link rel="apple-touch-icon" href="assets/nostradomus-icon.png">
-    <title>NOSTRADOMUS — Predictive Global Intelligence</title>
-    <style>
-      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
-      * { box-sizing: border-box; }
-      body { margin: 0; min-height: 100vh; color: #eff6f2; background: radial-gradient(circle at 75% 12%, #203e42 0, transparent 26rem), #071011; }
-      main { width: min(72rem, calc(100% - 3rem)); margin: 0 auto; padding: 8vh 0 4rem; }
-      .brand { display: block; width: min(22rem, 72vw); height: auto; margin: 0 0 1.2rem -1rem; }
-      .eyebrow { color: #81e6cf; letter-spacing: .16em; font-size: .75rem; font-weight: 700; }
-      h1 { max-width: 12ch; font-family: Georgia, serif; font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 400; letter-spacing: -.06em; line-height: .86; margin: .7rem 0 1.5rem; }
-      .lead { max-width: 45rem; color: #c2d0cc; font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.6; }
-      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; margin-top: 4rem; }
-      section { min-height: 13rem; padding: 1.5rem; border: 1px solid #2d4542; border-radius: .75rem; background: rgba(15, 31, 30, .74); }
-      h2 { margin: 0 0 .8rem; color: #81e6cf; font-size: .8rem; letter-spacing: .13em; text-transform: uppercase; }
-      p { color: #c2d0cc; line-height: 1.55; }
-      .note { margin-top: 3rem; color: #7e9690; font-size: .88rem; }
-    </style>
-  </head>
-  <body>
-    <main>
-      <img class="brand" src="assets/nostradomus-logo.png" alt="Nostradomus">
-      <div class="eyebrow">PREDICTIVE GLOBAL INTELLIGENCE</div>
-      <h1>The future leaves fingerprints.</h1>
-      <p class="lead">NOSTRADOMUS detects changing global conditions, models their possible consequences, and expresses uncertainty with auditable probabilities—not prophecies.</p>
-      <div class="grid">
-        <section>
-          <h2>The Oracle</h2>
-          <p>A calibrated ensemble that transforms evidence into explainable risk forecasts across multiple time horizons.</p>
-        </section>
-        <section>
-          <h2>The Codex</h2>
-          <p>An optional, interpretive layer for gematria and symbolic-pattern research. Its findings never change a forecast without independent validation.</p>
-        </section>
-        <section>
-          <h2>The Black Swan Scanner</h2>
-          <p>An anomaly engine for unusual combinations, fast-moving signals, and developing risks outside predefined models.</p>
-        </section>
-      </div>
-      <p class="note">In development. Probabilities, not prophecies.</p>
-    </main>
-  </body>
-</html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NOSTRADOMUS — predictive global intelligence.">
+  <link rel="icon" type="image/png" href="assets/nostradomus-icon.png"><link rel="stylesheet" href="styles.css">
+  <title>NOSTRADOMUS — Predictive Global Intelligence</title>
+</head>
+<body>
+  <div class="starfield" aria-hidden="true"></div>
+  <header class="hero">
+    <img class="brand" src="assets/nostradomus-logo.png" alt="Nostradomus">
+    <p class="eyebrow">PREDICTIVE GLOBAL INTELLIGENCE</p><h1>The future leaves fingerprints.</h1>
+    <p class="hero-copy">A living model of global systemic risk. Explore auditable forecasts, their evidence, and the signals moving beneath the surface.</p>
+    <div class="demo-note"><span></span> DEMONSTRATION DATA — NOT LIVE INTELLIGENCE</div>
+  </header>
+  <main>
+    <section class="world-strip" aria-label="Global conditions">
+      <article><span>WORLD STABILITY</span><strong>63.4</strong><em class="down">↓ 2.7 this month</em></article><article><span>90-DAY TAIL RISK</span><strong>18.7%</strong><em class="up">↑ 3.1 points</em></article><article><span>ACTIVE SIGNALS</span><strong>127</strong><em>19 accelerating</em></article><article><span>BLACK SWAN ACTIVITY</span><strong class="amber">ELEVATED</strong><em>4 critical clusters</em></article>
+    </section>
+    <section class="console" aria-label="Forecast console">
+      <div class="section-heading"><div><p class="eyebrow">THE ORACLE</p><h2>Forecast Console</h2></div><div class="horizons" role="group" aria-label="Forecast horizon"><button data-horizon="7">7D</button><button data-horizon="30">30D</button><button class="active" data-horizon="90">90D</button><button data-horizon="180">180D</button></div></div>
+      <div class="console-grid"><div id="forecast-list" class="forecast-list" aria-label="Forecasts"></div><article id="forecast-detail" class="detail-panel" aria-live="polite"></article></div>
+    </section>
+    <section class="systems-grid">
+      <article class="system-card codex-card"><div class="card-heading"><div><p class="eyebrow">THE CODEX</p><h2>Symbolic Pattern Engine</h2></div><label class="switch"><input id="codex-toggle" type="checkbox"><span></span></label></div><p>An optional interpretive layer for gematria, date cycles, and symbolic narrative patterns.</p><div id="codex-output" class="codex-output muted">Enable The Codex to inspect interpretive research alongside this forecast. It never changes Oracle probability.</div></article>
+      <article class="system-card"><p class="eyebrow">THE BLACK SWAN SCANNER</p><h2>Unusual combinations</h2><div class="cluster"><i></i><div><strong>Supply-chain stress cluster</strong><span>Shipping disruption · fertilizer constraints · food-price velocity</span></div><b>91</b></div><div class="cluster"><i></i><div><strong>Political instability cluster</strong><span>Protest acceleration · currency pressure · legitimacy narrative</span></div><b>84</b></div><button class="text-button" id="scan-button">Run anomaly scan <span>→</span></button><p id="scan-message" class="status-line"></p></article>
+    </section>
+    <section class="ledger"><div><p class="eyebrow">THE CHRONICLE</p><h2>Forecast ledger</h2><p>Every probability movement is recorded. Nothing is silently rewritten.</p></div><button id="alert-button" class="primary-button">Create risk alert</button></section>
+  </main>
+  <div id="toast" class="toast" role="status"></div><script src="app.js"></script>
+</body></html>
