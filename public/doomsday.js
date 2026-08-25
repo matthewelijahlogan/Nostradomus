@@ -21,12 +21,18 @@ window.addEventListener('oracle-volatility-loaded',event=>updateOracleClock(even
 if(window.oracleCountryVolatility)updateOracleClock(window.oracleCountryVolatility);
 fetch('https://nostradomus-live-api.onrender.com/api/brief').then(response=>{if(!response.ok)throw Error('Live data unavailable');return response.json()}).then(data=>{
   const nuclearSignals=data.articles.filter(article=>/nuclear|missile|radiation|atomic/i.test(article.title)).length;
+  const militarySignals=data.articles.filter(article=>/military|conflict|war|airstrike|invasion|troops/i.test(article.title)).length;
   const naturalSignals=data.quakes.length;
   document.querySelector('#nuclear-status').textContent=nuclearSignals?nuclearSignals+' ACTIVE':'NO ACTIVE SIGNALS';
   document.querySelector('#nuclear-detail').textContent='BBC WORLD · CURRENT FEED';
   document.querySelector('#natural-status').textContent=naturalSignals?naturalSignals+' SIGNIFICANT':'NO SIGNIFICANT QUAKES';
   document.querySelector('#natural-detail').textContent='USGS · PAST 24 HOURS';
+  const eventCategory=nuclearSignals?['NUCLEAR ESCALATION',nuclearSignals+' NUCLEAR-RELATED BBC SIGNAL'+(nuclearSignals===1?'':'S')]:militarySignals?['MILITARY ESCALATION',militarySignals+' CONFLICT-RELATED BBC SIGNAL'+(militarySignals===1?'':'S')]:naturalSignals?['NATURAL HAZARD',naturalSignals+' USGS SIGNIFICANT EVENT'+(naturalSignals===1?'':'S')]:['ECONOMIC DISRUPTION','COUNTRY-VOLATILITY MODEL FALLBACK'];
+  document.querySelector('#event-category').textContent=eventCategory[0];
+  document.querySelector('#event-category-detail').textContent=eventCategory[1];
 }).catch(()=>{
   document.querySelector('#nuclear-status').textContent='UNAVAILABLE';
   document.querySelector('#natural-status').textContent='UNAVAILABLE';
+  document.querySelector('#event-category').textContent='UNAVAILABLE';
+  document.querySelector('#event-category-detail').textContent='LIVE FEED NOT AVAILABLE';
 });

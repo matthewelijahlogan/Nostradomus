@@ -1,0 +1,519 @@
+﻿{
+    "asOf":  "2026Q2",
+    "retrievedFrom":  "EPA SDWIS quarterly public download",
+    "sourceUrl":  "https://echo.epa.gov/tools/data-downloads/sdwa-download-summary",
+    "coverageNote":  "Counts are unique public-water-system violation records reported in the listed SDWIS quarterly extract. They are compliance records, not measured contaminant concentrations or real-time drinking-water quality.",
+    "categories":  {
+                       "leadCopper":  "Lead and copper",
+                       "nitrateNitrite":  "Nitrate and nitrite",
+                       "microbial":  "Microbial",
+                       "otherHealthBased":  "Other health-based violations"
+                   },
+    "recordsProcessed":  15432737,
+    "states":  [
+                   {
+                       "code":  "AK",
+                       "name":  "Alaska",
+                       "leadCopper":  3182,
+                       "nitrateNitrite":  8081,
+                       "microbial":  34992,
+                       "otherHealthBased":  9024,
+                       "total":  55279
+                   },
+                   {
+                       "code":  "AL",
+                       "name":  "Alabama",
+                       "leadCopper":  645,
+                       "nitrateNitrite":  547,
+                       "microbial":  3452,
+                       "otherHealthBased":  710,
+                       "total":  5354
+                   },
+                   {
+                       "code":  "AR",
+                       "name":  "Arkansas",
+                       "leadCopper":  620,
+                       "nitrateNitrite":  45,
+                       "microbial":  13977,
+                       "otherHealthBased":  4813,
+                       "total":  19455
+                   },
+                   {
+                       "code":  "AS",
+                       "name":  "American Samoa",
+                       "leadCopper":  130,
+                       "nitrateNitrite":  354,
+                       "microbial":  2084,
+                       "otherHealthBased":  805,
+                       "total":  3373
+                   },
+                   {
+                       "code":  "AZ",
+                       "name":  "Arizona",
+                       "leadCopper":  4791,
+                       "nitrateNitrite":  12973,
+                       "microbial":  36660,
+                       "otherHealthBased":  5102,
+                       "total":  59526
+                   },
+                   {
+                       "code":  "CA",
+                       "name":  "California",
+                       "leadCopper":  8324,
+                       "nitrateNitrite":  14344,
+                       "microbial":  44042,
+                       "otherHealthBased":  18632,
+                       "total":  85342
+                   },
+                   {
+                       "code":  "CO",
+                       "name":  "Colorado",
+                       "leadCopper":  2902,
+                       "nitrateNitrite":  4923,
+                       "microbial":  17420,
+                       "otherHealthBased":  6214,
+                       "total":  31459
+                   },
+                   {
+                       "code":  "CT",
+                       "name":  "Connecticut",
+                       "leadCopper":  6131,
+                       "nitrateNitrite":  7565,
+                       "microbial":  27188,
+                       "otherHealthBased":  1297,
+                       "total":  42181
+                   },
+                   {
+                       "code":  "DC",
+                       "name":  "District of Columbia",
+                       "leadCopper":  62,
+                       "nitrateNitrite":  52,
+                       "microbial":  253,
+                       "otherHealthBased":  46,
+                       "total":  413
+                   },
+                   {
+                       "code":  "DE",
+                       "name":  "Delaware",
+                       "leadCopper":  780,
+                       "nitrateNitrite":  2231,
+                       "microbial":  1891,
+                       "otherHealthBased":  119,
+                       "total":  5021
+                   },
+                   {
+                       "code":  "FL",
+                       "name":  "Florida",
+                       "leadCopper":  3703,
+                       "nitrateNitrite":  11538,
+                       "microbial":  61893,
+                       "otherHealthBased":  5588,
+                       "total":  82722
+                   },
+                   {
+                       "code":  "GA",
+                       "name":  "Georgia",
+                       "leadCopper":  4204,
+                       "nitrateNitrite":  4353,
+                       "microbial":  22651,
+                       "otherHealthBased":  2257,
+                       "total":  33465
+                   },
+                   {
+                       "code":  "GU",
+                       "name":  "Guam",
+                       "leadCopper":  2,
+                       "nitrateNitrite":  0,
+                       "microbial":  60,
+                       "otherHealthBased":  18,
+                       "total":  80
+                   },
+                   {
+                       "code":  "HI",
+                       "name":  "Hawaii",
+                       "leadCopper":  65,
+                       "nitrateNitrite":  11,
+                       "microbial":  315,
+                       "otherHealthBased":  645,
+                       "total":  1036
+                   },
+                   {
+                       "code":  "IA",
+                       "name":  "Iowa",
+                       "leadCopper":  921,
+                       "nitrateNitrite":  9024,
+                       "microbial":  18175,
+                       "otherHealthBased":  1885,
+                       "total":  30005
+                   },
+                   {
+                       "code":  "ID",
+                       "name":  "Idaho",
+                       "leadCopper":  3375,
+                       "nitrateNitrite":  6063,
+                       "microbial":  34382,
+                       "otherHealthBased":  4896,
+                       "total":  48716
+                   },
+                   {
+                       "code":  "IL",
+                       "name":  "Illinois",
+                       "leadCopper":  6018,
+                       "nitrateNitrite":  7897,
+                       "microbial":  21126,
+                       "otherHealthBased":  6351,
+                       "total":  41392
+                   },
+                   {
+                       "code":  "IN",
+                       "name":  "Indiana",
+                       "leadCopper":  3956,
+                       "nitrateNitrite":  15426,
+                       "microbial":  64863,
+                       "otherHealthBased":  2159,
+                       "total":  86404
+                   },
+                   {
+                       "code":  "KS",
+                       "name":  "Kansas",
+                       "leadCopper":  3394,
+                       "nitrateNitrite":  2391,
+                       "microbial":  8367,
+                       "otherHealthBased":  4970,
+                       "total":  19122
+                   },
+                   {
+                       "code":  "KY",
+                       "name":  "Kentucky",
+                       "leadCopper":  869,
+                       "nitrateNitrite":  1647,
+                       "microbial":  5019,
+                       "otherHealthBased":  3146,
+                       "total":  10681
+                   },
+                   {
+                       "code":  "LA",
+                       "name":  "Louisiana",
+                       "leadCopper":  2367,
+                       "nitrateNitrite":  39,
+                       "microbial":  7892,
+                       "otherHealthBased":  9639,
+                       "total":  19937
+                   },
+                   {
+                       "code":  "MA",
+                       "name":  "Massachusetts",
+                       "leadCopper":  2035,
+                       "nitrateNitrite":  4154,
+                       "microbial":  13658,
+                       "otherHealthBased":  1007,
+                       "total":  20854
+                   },
+                   {
+                       "code":  "MD",
+                       "name":  "Maryland",
+                       "leadCopper":  5100,
+                       "nitrateNitrite":  2938,
+                       "microbial":  14421,
+                       "otherHealthBased":  901,
+                       "total":  23360
+                   },
+                   {
+                       "code":  "ME",
+                       "name":  "Maine",
+                       "leadCopper":  2230,
+                       "nitrateNitrite":  6588,
+                       "microbial":  30200,
+                       "otherHealthBased":  1590,
+                       "total":  40608
+                   },
+                   {
+                       "code":  "MI",
+                       "name":  "Michigan",
+                       "leadCopper":  5233,
+                       "nitrateNitrite":  22266,
+                       "microbial":  73394,
+                       "otherHealthBased":  1384,
+                       "total":  102277
+                   },
+                   {
+                       "code":  "MN",
+                       "name":  "Minnesota",
+                       "leadCopper":  1422,
+                       "nitrateNitrite":  1085,
+                       "microbial":  11855,
+                       "otherHealthBased":  1578,
+                       "total":  15940
+                   },
+                   {
+                       "code":  "MO",
+                       "name":  "Missouri",
+                       "leadCopper":  3530,
+                       "nitrateNitrite":  2763,
+                       "microbial":  49209,
+                       "otherHealthBased":  6443,
+                       "total":  61945
+                   },
+                   {
+                       "code":  "MP",
+                       "name":  "Northern Mariana Islands",
+                       "leadCopper":  910,
+                       "nitrateNitrite":  156,
+                       "microbial":  980,
+                       "otherHealthBased":  80,
+                       "total":  2126
+                   },
+                   {
+                       "code":  "MS",
+                       "name":  "Mississippi",
+                       "leadCopper":  850,
+                       "nitrateNitrite":  757,
+                       "microbial":  5718,
+                       "otherHealthBased":  1864,
+                       "total":  9189
+                   },
+                   {
+                       "code":  "MT",
+                       "name":  "Montana",
+                       "leadCopper":  4484,
+                       "nitrateNitrite":  7136,
+                       "microbial":  32738,
+                       "otherHealthBased":  2084,
+                       "total":  46442
+                   },
+                   {
+                       "code":  "NC",
+                       "name":  "North Carolina",
+                       "leadCopper":  9258,
+                       "nitrateNitrite":  23187,
+                       "microbial":  76499,
+                       "otherHealthBased":  4867,
+                       "total":  113811
+                   },
+                   {
+                       "code":  "ND",
+                       "name":  "North Dakota",
+                       "leadCopper":  595,
+                       "nitrateNitrite":  177,
+                       "microbial":  5900,
+                       "otherHealthBased":  564,
+                       "total":  7236
+                   },
+                   {
+                       "code":  "NE",
+                       "name":  "Nebraska",
+                       "leadCopper":  571,
+                       "nitrateNitrite":  2668,
+                       "microbial":  11123,
+                       "otherHealthBased":  1308,
+                       "total":  15670
+                   },
+                   {
+                       "code":  "NH",
+                       "name":  "New Hampshire",
+                       "leadCopper":  1501,
+                       "nitrateNitrite":  1772,
+                       "microbial":  16777,
+                       "otherHealthBased":  2474,
+                       "total":  22524
+                   },
+                   {
+                       "code":  "NJ",
+                       "name":  "New Jersey",
+                       "leadCopper":  6264,
+                       "nitrateNitrite":  11062,
+                       "microbial":  36292,
+                       "otherHealthBased":  1885,
+                       "total":  55503
+                   },
+                   {
+                       "code":  "NM",
+                       "name":  "New Mexico",
+                       "leadCopper":  3025,
+                       "nitrateNitrite":  1330,
+                       "microbial":  19560,
+                       "otherHealthBased":  8426,
+                       "total":  32341
+                   },
+                   {
+                       "code":  "NV",
+                       "name":  "Nevada",
+                       "leadCopper":  934,
+                       "nitrateNitrite":  2045,
+                       "microbial":  9545,
+                       "otherHealthBased":  1697,
+                       "total":  14221
+                   },
+                   {
+                       "code":  "NY",
+                       "name":  "New York",
+                       "leadCopper":  5463,
+                       "nitrateNitrite":  17948,
+                       "microbial":  71073,
+                       "otherHealthBased":  5573,
+                       "total":  100057
+                   },
+                   {
+                       "code":  "OH",
+                       "name":  "Ohio",
+                       "leadCopper":  5213,
+                       "nitrateNitrite":  12021,
+                       "microbial":  61741,
+                       "otherHealthBased":  6230,
+                       "total":  85205
+                   },
+                   {
+                       "code":  "OK",
+                       "name":  "Oklahoma",
+                       "leadCopper":  4291,
+                       "nitrateNitrite":  5203,
+                       "microbial":  29922,
+                       "otherHealthBased":  21031,
+                       "total":  60447
+                   },
+                   {
+                       "code":  "OR",
+                       "name":  "Oregon",
+                       "leadCopper":  4958,
+                       "nitrateNitrite":  12586,
+                       "microbial":  71131,
+                       "otherHealthBased":  4145,
+                       "total":  92820
+                   },
+                   {
+                       "code":  "PA",
+                       "name":  "Pennsylvania",
+                       "leadCopper":  6094,
+                       "nitrateNitrite":  59763,
+                       "microbial":  97095,
+                       "otherHealthBased":  7905,
+                       "total":  170857
+                   },
+                   {
+                       "code":  "PR",
+                       "name":  "Puerto Rico",
+                       "leadCopper":  1827,
+                       "nitrateNitrite":  719,
+                       "microbial":  58501,
+                       "otherHealthBased":  5351,
+                       "total":  66398
+                   },
+                   {
+                       "code":  "RI",
+                       "name":  "Rhode Island",
+                       "leadCopper":  485,
+                       "nitrateNitrite":  421,
+                       "microbial":  3166,
+                       "otherHealthBased":  241,
+                       "total":  4313
+                   },
+                   {
+                       "code":  "SC",
+                       "name":  "South Carolina",
+                       "leadCopper":  1917,
+                       "nitrateNitrite":  658,
+                       "microbial":  8288,
+                       "otherHealthBased":  1405,
+                       "total":  12268
+                   },
+                   {
+                       "code":  "SD",
+                       "name":  "South Dakota",
+                       "leadCopper":  1283,
+                       "nitrateNitrite":  919,
+                       "microbial":  9799,
+                       "otherHealthBased":  2269,
+                       "total":  14270
+                   },
+                   {
+                       "code":  "TN",
+                       "name":  "Tennessee",
+                       "leadCopper":  667,
+                       "nitrateNitrite":  3031,
+                       "microbial":  11076,
+                       "otherHealthBased":  2388,
+                       "total":  17162
+                   },
+                   {
+                       "code":  "TX",
+                       "name":  "Texas",
+                       "leadCopper":  21957,
+                       "nitrateNitrite":  10665,
+                       "microbial":  54775,
+                       "otherHealthBased":  30757,
+                       "total":  118154
+                   },
+                   {
+                       "code":  "UT",
+                       "name":  "Utah",
+                       "leadCopper":  1497,
+                       "nitrateNitrite":  6677,
+                       "microbial":  18847,
+                       "otherHealthBased":  1213,
+                       "total":  28234
+                   },
+                   {
+                       "code":  "VA",
+                       "name":  "Virginia",
+                       "leadCopper":  1960,
+                       "nitrateNitrite":  5431,
+                       "microbial":  30305,
+                       "otherHealthBased":  3587,
+                       "total":  41283
+                   },
+                   {
+                       "code":  "VI",
+                       "name":  "U.S. Virgin Islands",
+                       "leadCopper":  104,
+                       "nitrateNitrite":  29,
+                       "microbial":  184,
+                       "otherHealthBased":  0,
+                       "total":  317
+                   },
+                   {
+                       "code":  "VT",
+                       "name":  "Vermont",
+                       "leadCopper":  1183,
+                       "nitrateNitrite":  3913,
+                       "microbial":  16083,
+                       "otherHealthBased":  888,
+                       "total":  22067
+                   },
+                   {
+                       "code":  "WA",
+                       "name":  "Washington",
+                       "leadCopper":  3855,
+                       "nitrateNitrite":  10301,
+                       "microbial":  45745,
+                       "otherHealthBased":  3201,
+                       "total":  63102
+                   },
+                   {
+                       "code":  "WI",
+                       "name":  "Wisconsin",
+                       "leadCopper":  5259,
+                       "nitrateNitrite":  18042,
+                       "microbial":  37029,
+                       "otherHealthBased":  1544,
+                       "total":  61874
+                   },
+                   {
+                       "code":  "WV",
+                       "name":  "West Virginia",
+                       "leadCopper":  2979,
+                       "nitrateNitrite":  6332,
+                       "microbial":  19717,
+                       "otherHealthBased":  3104,
+                       "total":  32132
+                   },
+                   {
+                       "code":  "WY",
+                       "name":  "Wyoming",
+                       "leadCopper":  597,
+                       "nitrateNitrite":  2360,
+                       "microbial":  7781,
+                       "otherHealthBased":  987,
+                       "total":  11725
+                   }
+               ]
+}

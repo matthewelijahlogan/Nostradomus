@@ -34,6 +34,21 @@ function renderMetrics(data){
   ['Civil reporting signal','Military reporting signal','Gematria overlay'].forEach((label,index)=>{bars[index].querySelector('span').textContent=label;bars[index].querySelector('i').style.width=barValues[index]+'%';bars[index].querySelector('b').textContent=Math.round(barValues[index])});
   document.querySelector('.equation').innerHTML='<b>OBSERVED CIVIL + MILITARY</b><strong>'+Math.round((civilLatest+militaryLatest)*100)+'</strong><i>↔</i><b>INTERPRETIVE DIGIT REDUCTION</b><strong>'+gematriaLatest+'</strong>';
 }
+const fipsToState={1:'AL',2:'AK',4:'AZ',5:'AR',6:'CA',8:'CO',9:'CT',10:'DE',11:'DC',12:'FL',13:'GA',15:'HI',16:'ID',17:'IL',18:'IN',19:'IA',20:'KS',21:'KY',22:'LA',23:'ME',24:'MD',25:'MA',26:'MI',27:'MN',28:'MS',29:'MO',30:'MT',31:'NE',32:'NV',33:'NH',34:'NJ',35:'NM',36:'NY',37:'NC',38:'ND',39:'OH',40:'OK',41:'OR',42:'PA',44:'RI',45:'SC',46:'SD',47:'TN',48:'TX',49:'UT',50:'VT',51:'VA',53:'WA',54:'WV',55:'WI',56:'WY',60:'AS',66:'GU',69:'MP',72:'PR',78:'VI'};
+function ensureWaterPanel(){if(document.querySelector('#water-panel'))return;document.querySelector('.grid').insertAdjacentHTML('beforeend','<article id="water-panel" class="panel chart water-panel"><p>U.S. DRINKING-WATER COMPLIANCE FINDINGS - EPA SDWIS</p><div class="water-toolbar"><label>Violation category <select id="water-category"></select></label><output id="water-selection">Loading quarterly EPA extract...</output></div><svg id="water-map" viewBox="0 0 975 610" role="img" aria-label="United States map showing selected drinking-water compliance violation records by state"></svg><p id="water-note" class="water-note"></p></article>')}
+function loadScript(source){return new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=source;script.onload=resolve;script.onerror=reject;document.head.append(script)})}
+async function renderWaterMap(){
+  ensureWaterPanel();
+  const water=await fetch('data/us-water-compliance.json').then(response=>{if(!response.ok)throw Error('Water data unavailable');return response.json()});
+  if(!window.topojson)await loadScript('https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js');
+  if(!window.d3)await loadScript('https://cdn.jsdelivr.net/npm/d3-geo@3/dist/d3-geo.min.js');
+  const select=document.querySelector('#water-category');select.innerHTML=Object.entries(water.categories).map(([key,label])=>'<option value="'+key+'">'+label+'</option>').join('');
+  const stateData=new Map(water.states.map(state=>[state.code,state])),svg=document.querySelector('#water-map'),note=document.querySelector('#water-note'),selection=document.querySelector('#water-selection');
+  const topology=await fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(response=>{if(!response.ok)throw Error('Map geometry unavailable');return response.json()});
+  const states=topojson.feature(topology,topology.objects.states).features.filter(feature=>fipsToState[Number(feature.id)]),path=d3.geoPath();
+  function draw(){const category=select.value,maximum=Math.max(...water.states.map(state=>state[category]),1);svg.innerHTML=states.map(feature=>{const code=fipsToState[Number(feature.id)],state=stateData.get(code),value=state?state[category]:0,opacity=.16+.84*Math.sqrt(value/maximum);return '<path data-code="'+code+'" d="'+path(feature)+'" fill="'+(value?'#ff3fbd':'#183047')+'" fill-opacity="'+opacity.toFixed(2)+'" stroke="#42dff8" stroke-opacity=".58"><title>'+state.name+': '+value+' reported record'+(value===1?'':'s')+'</title></path>'}).join('');note.textContent=water.coverageNote+' Extract: '+water.asOf+'. Source: EPA SDWIS public download.';selection.textContent='Select a state for its reported-record count.';svg.querySelectorAll('path').forEach(element=>element.addEventListener('click',()=>{const state=stateData.get(element.dataset.code),value=state[category];selection.textContent=state.name+': '+value+' '+water.categories[category].toLowerCase()+' record'+(value===1?'':'s')+' in '+water.asOf+'.'}))}
+  select.addEventListener('change',draw);draw();
+}
 async function execute(){
   modal.hidden=false;
   modal.querySelector('.progress i').style.width='100%';
@@ -42,6 +57,7 @@ async function execute(){
     const response=await fetch(METRICS_API);
     if(!response.ok)throw Error('Metrics service unavailable');
     renderMetrics(await response.json());
+    renderWaterMap().catch(()=>{ensureWaterPanel();document.querySelector('#water-selection').textContent='EPA map data is temporarily unavailable.'});
     document.querySelector('#empty').hidden=true;
     document.querySelector('#results').hidden=false;
     modal.hidden=true;
