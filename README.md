@@ -20,4 +20,18 @@ Open `http://localhost:8080`.
 
 ## Product documentation
 
+## Earth Outlook — phase one
+
+The home page now includes 18 evidence-linked watch conditions spanning calamities
+and societal triumphs. Filter and search conditions, inspect supporting reporting
+and observations, follow connected systems, and save immutable evidence snapshots
+in your browser. Outlook briefs and the personal chronicle can be downloaded as JSON.
+
+This phase uses existing public-source endpoints and makes no paid model calls.
+Keyword matches are reporting signals, not verified events or calibrated probabilities.
+Conditions without matching observations explicitly show evidence gaps. The coverage
+is a starting taxonomy, not an exhaustive inventory of everything that can happen.
+
+Validate the evidence engine with `node scripts/test-outlook.js`.
+
 The current product specification is in `Nostradomus Project Overview.txt`.
