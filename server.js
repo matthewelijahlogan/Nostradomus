@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const getIntelligence = require('./intelligence').createIntelligence();
+const getForecasts = require('./forecasting').createForecasts();
 
 const PORT = process.env.PORT || 10000;
 const PUBLIC = path.join(__dirname, 'public');
@@ -132,6 +133,11 @@ async function getCountryVolatility() {
 const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.json': 'application/json; charset=utf-8' };
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
+  if (url.pathname === '/api/forecasts') {
+    try { res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify(await getForecasts())); }
+    catch { res.writeHead(502, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify({ error: 'Forecast computation failed' })); }
+    return;
+  }
   if (url.pathname === '/api/intelligence') {
     try { res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify(await getIntelligence())); }
     catch { res.writeHead(502, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://nostradomus.onrender.com' }); res.end(JSON.stringify({ error: 'Intelligence retrieval failed' })); }

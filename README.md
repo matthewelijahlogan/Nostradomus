@@ -54,4 +54,30 @@ the same underlying source. US energy coverage is not globally representative.
 Run `node scripts/test-intelligence.js` and `node scripts/test-outlook.js`.
 The application makes no paid AI calls and requires no API keys for these feeds.
 
+## Measurable forecasting — phase three
+
+`GET /api/forecasts` computes four historical baselines: worldwide M7+ occurrence
+within 30 days; worldwide M8+ occurrence within 90 days; world annual GDP growth
+below zero; and world annual GDP growth above 3%. These are measurable event
+definitions, not forecasts for all 18 watch conditions.
+
+Earthquake probabilities use ten years of USGS observations and a Gamma-Poisson
+rate model with a Jeffreys prior. A fixed fit excluding the last 730 days is scored
+on non-overlapping holdout windows. Annual probabilities use World Bank WDI
+history and a Beta(1,1) prior; the final 15 observed years are excluded from the
+backtest fit. Live estimates refit the full observed record. The UI displays
+exact resolution rules, source data, sample sizes, Brier scores, and test outcomes.
+
+These baselines assume historical frequencies remain relevant. They are not
+proven prospectively calibrated and do not incorporate current reporting. World
+Bank backtests use revised observations rather than historical data vintages.
+Earthquake probabilities describe global occurrence, not local danger or impact.
+Annual growth above 3% is a narrowly defined economic outcome, not a broad measure
+of societal flourishing. Insufficient or unavailable sources withhold models.
+
+Model responses are cached for six hours and requests time out after 15 seconds.
+Users can freeze and export up to 50 forecast records in browser storage; this
+phase does not automatically resolve outcomes or create a shared server ledger.
+Run `node scripts/test-forecasting.js` for model and failure checks.
+
 The current product specification is in `Nostradomus Project Overview.txt`.
