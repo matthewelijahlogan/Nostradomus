@@ -34,4 +34,24 @@ is a starting taxonomy, not an exhaustive inventory of everything that can happe
 
 Validate the evidence engine with `node scripts/test-outlook.js`.
 
+## Intelligence gathering — phase two
+
+`GET /api/intelligence` collects ten free public feeds: BBC World, Health, and
+Science; WHO; UN News; NASA News and Earth Observatory; US Department of Energy;
+Science/AAAS; and NOAA space-weather bulletins. The source observatory displays
+feed availability, publication dates, attempts, and last successful retrievals.
+Requests have 12-second timeouts, concurrent collections are shared, and results
+are cached for 15 minutes. Last-successful entries are retained and marked during
+outages within the running server process; they do not survive a server restart.
+
+Evidence carries publication-age labels. Recent similar headlines from different
+source families generate linked corroboration candidates. Headline wording also
+flags potential supporting and counter-signals; neither feature verifies facts
+or proves contradictory claims. BBC specialist feeds count as one family, as do
+NASA feeds. These checks do not determine whether different publishers relied on
+the same underlying source. US energy coverage is not globally representative.
+
+Run `node scripts/test-intelligence.js` and `node scripts/test-outlook.js`.
+The application makes no paid AI calls and requires no API keys for these feeds.
+
 The current product specification is in `Nostradomus Project Overview.txt`.

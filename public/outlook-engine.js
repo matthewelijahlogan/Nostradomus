@@ -22,24 +22,51 @@
     ['society','triumph','Human flourishing','1–5 years','Expanded education, rights, and access to essential services could strengthen social resilience.','education|poverty|literacy|human rights|sanitation','Measured access gains and durable institutional reform','Exclusion and declining essential-service access','unrest,health,economy']
   ].map(([id,kind,title,window,hypothesis,pattern,strengthen,weaken,links]) => ({id,kind,title,window,hypothesis,pattern,strengthen,weaken,links:links.split(',')}));
   const safeUrl = value => {try {const u=new URL(value);return /^https?:$/.test(u.protocol)?u.href:null;}catch{return null;}};
-  function assess(brief = {}, countries = []) {
+  function freshness(date,now=Date.now()) {
+    if(date==null||date==='')return 'Date unknown';
+    const time=typeof date==='number'?date:Date.parse(date);
+    if(!Number.isFinite(time))return 'Date unknown';
+    const age=(now-time)/86400000;
+    return age< -1?'Future-dated':age<=7?'Past 7 days':age<=30?'Past 30 days':'Older than 30 days';
+  }
+  function corroboration(evidence) {
+    const stop=new Set('the a an of to in on for and with from by as is are new says said after at over amid could may report reports world global'.split(' '));
+    const tokens=title=>new Set((title.toLowerCase().match(/[a-z]{3,}/g)||[]).filter(t=>!stop.has(t)));
+    const pairs=[];
+    for(let i=0;i<evidence.length;i++)for(let j=i+1;j<evidence.length;j++){
+      const a=evidence[i],b=evidence[j];if((a.sourceFamily||a.source)===(b.sourceFamily||b.source))continue;
+      if(!['Past 7 days','Past 30 days'].includes(a.freshness)||!['Past 7 days','Past 30 days'].includes(b.freshness))continue;
+      const x=tokens(a.title),y=tokens(b.title),shared=[...x].filter(t=>y.has(t));
+      if(shared.length>=3&&shared.length/new Set([...x,...y]).size>=.4)pairs.push({a:a.url,b:b.url,sources:[a.source,b.source],sharedTerms:shared});
+    }
+    return pairs.slice(0,5);
+  }
+  function assess(brief = {}, countries = [], now = Date.now()) {
     const articles = Array.isArray(brief.articles) ? brief.articles : [];
     return topics.map(topic => {
-      const matcher = new RegExp(topic.pattern,'i');
+      const matcher = new RegExp(`\\b(?:${topic.pattern})\\b`,'i');
       const seen = new Set();
       const evidence = articles.filter(a => matcher.test(String(a.title))).flatMap(a => {
         const url=safeUrl(a.url);if(!url||seen.has(url))return [];seen.add(url);
-        return [{title:String(a.title),url,source:String(a.source||'Public reporting'),date:a.published||brief.retrievedAt,type:'Reporting mention'}];
+        return [{title:String(a.title),url,source:String(a.source||'Public reporting'),sourceFamily:a.sourceFamily||(/^BBC\b/i.test(a.source||'')?'BBC':a.source)||'Public reporting',date:a.published||null,retrievedAt:a.retrievedAt||brief.retrievedAt||null,retained:!!a.retained,type:a.type||'Reporting mention'}];
       });
       if(topic.id==='earth') (brief.quakes||[]).forEach(q=>evidence.push({title:`Recorded M${q.mag} earthquake: ${q.place}`,url:safeUrl(q.url)||'https://earthquake.usgs.gov/',source:'USGS',date:q.time,type:'Measured observation'}));
       if(topic.id==='space' && brief.interstellarOutlook?.object) evidence.push({title:`Known flyby: ${brief.interstellarOutlook.object} — ${brief.interstellarOutlook.lunarDistances} lunar distances; not an impact prediction`,url:'https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html',source:'NASA/JPL',date:brief.interstellarOutlook.date,type:'Trajectory observation'});
       if(topic.id==='economy' && Number.isFinite(brief.macro?.value)) evidence.push({title:`World GDP growth: ${brief.macro.value.toFixed(2)}% (${brief.macro.year})`,url:'https://data.worldbank.org/indicator/NY.GDP.MKTP.KD.ZG',source:'World Bank',date:brief.macro.year,type:'Annual indicator'});
       if(topic.id==='economy') countries.filter(c=>c.inputs && c.score!=null).sort((a,b)=>b.score-a.score).slice(0,3).forEach(c=>evidence.push({title:`${c.name}: inflation ${c.inputs.inflation.toFixed(1)}% (${c.inputs.inflationYear}); growth ${c.inputs.growth.toFixed(1)}% (${c.inputs.growthYear})`,url:`https://data.worldbank.org/country/${c.iso3}`,source:'World Bank',date:c.inputs.inflationYear,type:'Annual indicator'}));
-      const sources = [...new Set(evidence.map(e=>e.source))];
-      return {...topic,evidence,sources,status:evidence.length?'Signals observed':'Evidence gap',coverage:sources.length>1?'Multiple source families':sources.length?'Single source family':'No matching evidence'};
+      evidence.forEach(e=>{e.freshness=freshness(e.date,now);e.sourceFamily=e.sourceFamily||e.source;
+        const improving=/\b(ceasefire|peace deal|declin\w*|easing|recover\w*|contained|eradicated|restored|breakthrough|approved|successful|improv\w*)\b/i.test(e.title);
+        const worsening=/\b(escalat\w*|surge\w*|outbreak|crisis|attack\w*|fail\w*|collapse\w*|shortage\w*|worsen\w*|record high)\b/i.test(e.title);
+        e.direction=improving&&worsening?'Mixed wording':improving?(topic.kind==='risk'?'Potential counter-signal':'Potential supporting signal'):worsening?(topic.kind==='risk'?'Potential supporting signal':'Potential counter-signal'):'Direction unclassified';
+      });
+      const sources = [...new Set(evidence.map(e=>e.sourceFamily))];
+      const current=evidence.filter(e=>['Past 7 days','Past 30 days'].includes(e.freshness)&&!e.retained);
+      const corroborationCandidates=corroboration(evidence);
+      const mixed=evidence.some(e=>e.direction==='Potential supporting signal')&&evidence.some(e=>e.direction==='Potential counter-signal');
+      return {...topic,evidence,sources,status:evidence.length?'Signals observed':'Evidence gap',coverage:sources.length>1?'Multiple source families':sources.length?'Single source family':'No matching evidence',currentCount:current.length,corroborationCandidates,mixedSignals:mixed};
     });
   }
-  const api={topics,assess,safeUrl};
+  const api={topics,assess,safeUrl,freshness,corroboration};
   if(typeof module!=='undefined' && module.exports) module.exports=api;
   else root.EarthOutlook=api;
 })(typeof window!=='undefined'?window:globalThis);
